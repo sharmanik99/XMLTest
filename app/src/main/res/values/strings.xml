@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">TestXML</string>
+    <string name="connection_error">IO Connection Error</string>
+    <string name="xml_error">XML Error</string>
+</resources>
