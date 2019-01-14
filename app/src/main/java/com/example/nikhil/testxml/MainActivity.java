@@ -4,8 +4,11 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.squareup.picasso.Picasso;
 
 import org.xmlpull.v1.XmlPullParserException;
 import java.net.URL;
@@ -16,12 +19,22 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String URL = "https://amphibiaweb.org/cgi/amphib_ws?where-genus=Agalychnis&where-species=callidryas&src=eol";
+    private static String URL = "https://amphibiaweb.org/cgi/amphib_ws?where-genus=Agalychnis&where-species=callidryas&src=eol";
+    public static String imageID = "";
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toast.makeText(this, "Starting XML Download!", Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "Starting XML Download!", Toast.LENGTH_LONG).show();
+        Bundle extras = getIntent().getExtras();
+        if(extras != null){
+            String scientific_name = extras.getString("scientific_name");
+            imageID = extras.getString("imageID").replaceAll(" ", "");
+            Toast.makeText(this, imageID, Toast.LENGTH_SHORT).show();
+            String genus = scientific_name.split(" ")[0];
+            String species = scientific_name.split(" ")[1];
+            URL = "https://amphibiaweb.org/cgi/amphib_ws?where-genus=" + genus + "&where-species=" + species +"&src=eol";
+        }
         new DownloadXmlTask().execute(URL);
         //Toast.makeText(this, loadXmlFromNetwork(URL), Toast.LENGTH_SHORT).show();
     }
@@ -48,7 +61,8 @@ public class MainActivity extends AppCompatActivity {
 //                Toast.makeText(MainActivity.this, species.common_name, Toast.LENGTH_SHORT).show();
 //            }
             TextView commonName = (TextView) findViewById(R.id.commonNameLabel);
-            EditText descriptionLabel = (EditText) findViewById(R.id.descriptionLabel);
+//            EditText descriptionLabel = (EditText) findViewById(R.id.descriptionLabel);
+            ImageView imageView = (ImageView)findViewById(R.id.imageDisplay);
             TextView locationLabel = (TextView) findViewById(R.id.locationLabel);
             TextView familyLabel = (TextView) findViewById(R.id.familyLabel);
             TextView orderLabel = (TextView) findViewById(R.id.orderLabel);
@@ -62,12 +76,14 @@ public class MainActivity extends AppCompatActivity {
                 displayNameList += "\n";
             }
             commonName.setText(displayNameList);
+            String imageURL = "https://calphotos.berkeley.edu/imgs/128x192/"+imageID.substring(0, 4)+"_" + imageID.substring(4, 8) + "/"+ imageID.substring(8, 12) + "/" + imageID.substring(12) +".jpeg";
+            Picasso.get().load(imageURL).into(imageView);
             orderLabel.setText(tempSpecies.order);
             familyLabel.setText(tempSpecies.family);
             genusLabel.setText(tempSpecies.genus);
             speciesLabel.setText(tempSpecies.species);
             locationLabel.setText(tempSpecies.isocc);
-            descriptionLabel.setText(tempSpecies.description);
+            //descriptionLabel.setText(tempSpecies.description);
 
         }
     }

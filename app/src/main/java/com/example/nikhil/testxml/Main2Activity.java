@@ -1,6 +1,7 @@
 package com.example.nikhil.testxml;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -60,13 +61,14 @@ public class Main2Activity extends AppCompatActivity {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     //Toast.makeText(Main2Activity.this, String.valueOf(position), Toast.LENGTH_SHORT).show();
                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(Main2Activity.this);
-                    Amphibian tempAmph = amphibians.get(position);
+                    final Amphibian tempAmph = amphibians.get(position);
                     alertDialogBuilder.setTitle("Learn More About " + tempAmph.scientificName);
                     alertDialogBuilder.setMessage("Order: " + tempAmph.order + "\nFamily: " + tempAmph.family + "\nGenus: " + tempAmph.genus + "\nSpecies: " + tempAmph.species);
                     alertDialogBuilder.setPositiveButton("View More", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            Toast.makeText(Main2Activity.this, "Open Species Page about this", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(Main2Activity.this, "Open Species Page about this", Toast.LENGTH_SHORT).show();
+                            showIndividiualSpeciesPage(tempAmph);
                         }
                     }).setNegativeButton("Close", new DialogInterface.OnClickListener() {
                         @Override
@@ -109,6 +111,13 @@ public class Main2Activity extends AppCompatActivity {
         // Starts the query
         conn.connect();
         return conn.getInputStream();
+    }
+
+    private void showIndividiualSpeciesPage(Amphibian tempAmphibian){
+        Intent showSpecies = new Intent(Main2Activity.this, MainActivity.class);
+        showSpecies.putExtra("scientific_name", tempAmphibian.scientificName);
+        showSpecies.putExtra("imageID", tempAmphibian.imageID);
+        startActivity(showSpecies);
     }
 
 }
